@@ -18,6 +18,7 @@ COMMON_FILES = [
 'core/Vector2.js',
 'core/Vector3.js',
 'core/Vector4.js',
+'core/Frustum.js',
 'core/Ray.js',
 'core/Rectangle.js',
 'core/Math.js',
@@ -90,13 +91,16 @@ EXTRAS_FILES = [
 'extras/ImageUtils.js',
 'extras/SceneUtils.js',
 'extras/ShaderUtils.js',
+'extras/core/BufferGeometry.js',
 'extras/core/Curve.js',
 'extras/core/CurvePath.js',
+'extras/core/Gyroscope.js',
 'extras/core/Path.js',
 'extras/core/Shape.js',
 'extras/core/TextPath.js',
 'extras/animation/AnimationHandler.js',
 'extras/animation/Animation.js',
+'extras/animation/KeyFrameAnimation.js',
 'extras/cameras/CubeCamera.js',
 'extras/cameras/FirstPersonCamera.js',
 'extras/cameras/PathCamera.js',
@@ -120,6 +124,8 @@ EXTRAS_FILES = [
 'extras/geometries/TextGeometry.js',
 'extras/geometries/TorusGeometry.js',
 'extras/geometries/TorusKnotGeometry.js',
+'extras/helpers/AxisHelper.js',
+'extras/helpers/CameraHelper.js',
 'extras/modifiers/SubdivisionModifier.js',
 'extras/loaders/Loader.js',
 'extras/loaders/BinaryLoader.js',
@@ -127,10 +133,15 @@ EXTRAS_FILES = [
 'extras/loaders/JSONLoader.js',
 'extras/loaders/SceneLoader.js',
 'extras/loaders/UTF8Loader.js',
-'extras/objects/Axes.js',
 'extras/objects/MarchingCubes.js',
+'extras/objects/LensFlare.js',
+'extras/plugins/LensFlarePlugin.js',
+'extras/plugins/ShadowMapPlugin.js',
+'extras/plugins/SpritePlugin.js',
 'extras/renderers/AnaglyphWebGLRenderer.js',
-'extras/renderers/CrosseyedWebGLRenderer.js'
+'extras/renderers/CrosseyedWebGLRenderer.js',
+'extras/shaders/ShaderFlares.js',
+'extras/shaders/ShaderSprite.js'
 ]
 
 CANVAS_FILES = [
@@ -139,6 +150,7 @@ CANVAS_FILES = [
 'core/Vector2.js',
 'core/Vector3.js',
 'core/Vector4.js',
+'core/Frustum.js',
 'core/Ray.js',
 'core/Rectangle.js',
 'core/Math.js',
@@ -182,7 +194,8 @@ CANVAS_FILES = [
 'renderers/renderables/RenderableFace4.js',
 'renderers/renderables/RenderableObject.js',
 'renderers/renderables/RenderableParticle.js',
-'renderers/renderables/RenderableLine.js'
+'renderers/renderables/RenderableLine.js',
+'extras/ImageUtils.js'
 ]
 
 DOM_FILES = [
@@ -191,6 +204,7 @@ DOM_FILES = [
 'core/Vector2.js',
 'core/Vector3.js',
 'core/Vector4.js',
+'core/Frustum.js',
 'core/Ray.js',
 'core/Rectangle.js',
 'core/Math.js',
@@ -206,13 +220,25 @@ DOM_FILES = [
 'cameras/Camera.js',
 'cameras/OrthographicCamera.js',
 'cameras/PerspectiveCamera.js',
+'lights/Light.js',
+'materials/Material.js',
 'materials/ParticleDOMMaterial.js',
+'textures/Texture.js',
 'objects/Particle.js',
+'objects/Mesh.js',
+'objects/Line.js',
 'objects/Bone.js',
 'objects/Sprite.js',
 'scenes/Scene.js',
 'renderers/DOMRenderer.js',
-'renderers/renderables/RenderableParticle.js'
+'renderers/renderables/RenderableParticle.js',
+'renderers/renderables/RenderableVertex.js',
+'renderers/renderables/RenderableFace3.js',
+'renderers/renderables/RenderableFace4.js',
+'renderers/renderables/RenderableObject.js',
+'renderers/renderables/RenderableParticle.js',
+'renderers/renderables/RenderableLine.js',
+'extras/ImageUtils.js'
 ]
 
 SVG_FILES = [
@@ -221,6 +247,7 @@ SVG_FILES = [
 'core/Vector2.js',
 'core/Vector3.js',
 'core/Vector4.js',
+'core/Frustum.js',
 'core/Ray.js',
 'core/Rectangle.js',
 'core/Math.js',
@@ -250,6 +277,7 @@ SVG_FILES = [
 'materials/MeshNormalMaterial.js',
 'materials/MeshFaceMaterial.js',
 'materials/ParticleBasicMaterial.js',
+'textures/Texture.js',
 'objects/Particle.js',
 'objects/Line.js',
 'objects/Mesh.js',
@@ -262,7 +290,8 @@ SVG_FILES = [
 'renderers/renderables/RenderableFace4.js',
 'renderers/renderables/RenderableObject.js',
 'renderers/renderables/RenderableParticle.js',
-'renderers/renderables/RenderableLine.js'
+'renderers/renderables/RenderableLine.js',
+'extras/ImageUtils.js'
 ]
 
 WEBGL_FILES = [
@@ -271,6 +300,7 @@ WEBGL_FILES = [
 'core/Vector2.js',
 'core/Vector3.js',
 'core/Vector4.js',
+'core/Frustum.js',
 'core/Ray.js',
 'core/Rectangle.js',
 'core/Math.js',
@@ -322,7 +352,23 @@ WEBGL_FILES = [
 'renderers/WebGLShaders.js',
 'renderers/WebGLRenderer.js',
 'renderers/WebGLRenderTarget.js',
-'renderers/WebGLRenderTargetCube.js'
+'renderers/WebGLRenderTargetCube.js',
+'renderers/renderables/RenderableVertex.js',
+'renderers/renderables/RenderableFace3.js',
+'renderers/renderables/RenderableFace4.js',
+'renderers/renderables/RenderableObject.js',
+'renderers/renderables/RenderableParticle.js',
+'renderers/renderables/RenderableLine.js',
+'extras/core/BufferGeometry.js',
+'extras/helpers/CameraHelper.js',
+'extras/objects/LensFlare.js',
+'extras/objects/MarchingCubes.js',
+'extras/plugins/LensFlarePlugin.js',
+'extras/plugins/ShadowMapPlugin.js',
+'extras/plugins/SpritePlugin.js',
+'extras/shaders/ShaderFlares.js',
+'extras/shaders/ShaderSprite.js',
+'extras/ImageUtils.js'
 ]
 
 def merge(files):
@@ -342,7 +388,11 @@ def output(text, filename):
 		f.write(text)
 
 
-def compress(text):
+def compress(text, fname_externs):
+
+	externs = ""
+	if fname_externs:
+		externs = "--externs %s.js" % fname_externs
 
 	in_tuple = tempfile.mkstemp()
 	with os.fdopen(in_tuple[0], 'w') as handle:
@@ -350,7 +400,7 @@ def compress(text):
 
 	out_tuple = tempfile.mkstemp()
 
-	os.system("java -jar compiler/compiler.jar --language_in=ECMASCRIPT5_STRICT --js %s --js_output_file %s" % (in_tuple[1], out_tuple[1]))
+	os.system("java -jar compiler/compiler.jar --warning_level=VERBOSE --jscomp_off=globalThis --jscomp_off=checkTypes --externs externs_common.js %s --language_in=ECMASCRIPT5_STRICT --js %s --js_output_file %s" % (externs, in_tuple[1], out_tuple[1]))
 
 	with os.fdopen(out_tuple[0], 'r') as handle:
 		compressed = handle.read()
@@ -380,7 +430,7 @@ def makeDebug(text):
 	return text
 
 
-def buildLib(files, debug, minified, filename):
+def buildLib(files, debug, minified, filename, fname_externs):
 
 	text = merge(files)
 
@@ -400,14 +450,14 @@ def buildLib(files, debug, minified, filename):
 	print "=" * 40
 
 	if minified:
-		text = compress(text)
+		text = compress(text, fname_externs)
 
 	output(addHeader(text, filename), folder + filename)
 
 
 def buildIncludes(files, filename):
 
-	template = '\t\t<script type="text/javascript" src="../src/%s"></script>'
+	template = '\t\t<script src="../src/%s"></script>'
 	text = "\n".join(template % f for f in files)
 
 	output(text, filename + '.js')
@@ -460,17 +510,17 @@ def main(argv=None):
 	minified = args.minified
 
 	config = [
-	['Three', 'includes', COMMON_FILES + EXTRAS_FILES, args.common],
-	['ThreeCanvas', 'includes_canvas', CANVAS_FILES, args.canvas],
-	['ThreeDOM', 'includes_dom', DOM_FILES, args.dom],
-	['ThreeSVG', 'includes_svg', SVG_FILES, args.svg],
-	['ThreeWebGL', 'includes_webgl', WEBGL_FILES, args.webgl],
-	['ThreeExtras', 'includes_extras', EXTRAS_FILES, args.extras]
+	['Three', 'includes', '', COMMON_FILES + EXTRAS_FILES, args.common],
+	['ThreeCanvas', 'includes_canvas', '', CANVAS_FILES, args.canvas],
+	['ThreeDOM', 'includes_dom', '', DOM_FILES, args.dom],
+	['ThreeSVG', 'includes_svg', '', SVG_FILES, args.svg],
+	['ThreeWebGL', 'includes_webgl', '', WEBGL_FILES, args.webgl],
+	['ThreeExtras', 'includes_extras', 'externs_extras', EXTRAS_FILES, args.extras]
 	]
 
-	for fname_lib, fname_inc, files, enabled in config:
+	for fname_lib, fname_inc, fname_externs, files, enabled in config:
 		if enabled or args.all:
-			buildLib(files, debug, minified, fname_lib)
+			buildLib(files, debug, minified, fname_lib, fname_externs)
 			if args.includes:
 				buildIncludes(files, fname_inc)
 
