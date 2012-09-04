@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<title>three.js webgl - ribbons</title>
@@ -32,7 +32,7 @@
 
 	<body>
 
-		<script src="../build/Three.js"></script>
+		<script src="../build/three.min.js"></script>
 
 		<script src="js/ShaderExtras.js"></script>
 
@@ -75,12 +75,11 @@
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
 
-				scene = new THREE.Scene();
-				scene.fog = new THREE.FogExp2( 0x000000, 0.0016 );
-
 				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 3000 );
 				camera.position.z = 1200;
-				scene.add( camera );
+
+				scene = new THREE.Scene();
+				scene.fog = new THREE.FogExp2( 0x000000, 0.0016 );
 
 				geometry = new THREE.Geometry();
 				geometry2 = new THREE.Geometry();
@@ -101,11 +100,8 @@
 
 					}
 
-					vector = new THREE.Vector3( x, y, z );
-					geometry.vertices.push( new THREE.Vertex( vector ) );
-
-					vector = new THREE.Vector3( x, y, z );
-					geometry2.vertices.push( new THREE.Vertex( vector ) );
+					geometry.vertices.push( new THREE.Vector3( x, y, z ) );
+					geometry2.vertices.push( new THREE.Vector3( x, y, z ) );
 
 					h = i2 % 2 ? 1 : 0.15;
 					if( i2 % 4 <= 2 ) h -= 0.15;
@@ -118,7 +114,7 @@
 				}
 
 				var tmpRot = new THREE.Matrix4();
-				tmpRot.setRotationAxis( new THREE.Vector3( 1, 0, 0 ), Math.PI/2 );
+				tmpRot.makeRotationAxis( new THREE.Vector3( 1, 0, 0 ), Math.PI/2 );
 
 				xgrid = 34;
 				ygrid = 15;
@@ -128,7 +124,7 @@
 				for ( i = 0; i < xgrid; i ++ )
 				for ( j = 0; j < ygrid; j ++ ) {
 
-					materials[ c ] = new THREE.MeshBasicMaterial( { color: 0xffffff, vertexColors: true } );
+					materials[ c ] = new THREE.MeshBasicMaterial( { color: 0xffffff, vertexColors: true, side: THREE.DoubleSide } );
 
 					ribbon = new THREE.Ribbon( i % 2 ? geometry : geometry2, materials[ c ] );
 					ribbon.rotation.x = 0;
@@ -142,7 +138,6 @@
 
 					materials[c].color.setHSV( i / xgrid, 0.3 +  0.7 * j / ygrid, 1 );
 
-					ribbon.doubleSided = true;
 					ribbon.matrixAutoUpdate = false;
 
 					// manually create local matrix
@@ -150,17 +145,17 @@
 					ribbon.matrix.setPosition( ribbon.position );
 					ribbon.matrixRotationWorld.setRotationFromEuler( ribbon.rotation );
 
-					ribbon.matrix.n11 = ribbon.matrixRotationWorld.n11;
-					ribbon.matrix.n12 = ribbon.matrixRotationWorld.n12;
-					ribbon.matrix.n13 = ribbon.matrixRotationWorld.n13;
+					ribbon.matrix.elements[ 0 ] = ribbon.matrixRotationWorld.elements[ 0 ];
+					ribbon.matrix.elements[ 4 ] = ribbon.matrixRotationWorld.elements[ 4 ];
+					ribbon.matrix.elements[ 8 ] = ribbon.matrixRotationWorld.elements[ 8 ];
 
-					ribbon.matrix.n21 = ribbon.matrixRotationWorld.n21;
-					ribbon.matrix.n22 = ribbon.matrixRotationWorld.n22;
-					ribbon.matrix.n23 = ribbon.matrixRotationWorld.n23;
+					ribbon.matrix.elements[ 1 ] = ribbon.matrixRotationWorld.elements[ 1 ];
+					ribbon.matrix.elements[ 5 ] = ribbon.matrixRotationWorld.elements[ 5 ];
+					ribbon.matrix.elements[ 9 ] = ribbon.matrixRotationWorld.elements[ 9 ];
 
-					ribbon.matrix.n31 = ribbon.matrixRotationWorld.n31;
-					ribbon.matrix.n32 = ribbon.matrixRotationWorld.n32;
-					ribbon.matrix.n33 = ribbon.matrixRotationWorld.n33;
+					ribbon.matrix.elements[ 2 ] = ribbon.matrixRotationWorld.elements[ 2 ];
+					ribbon.matrix.elements[ 6 ] = ribbon.matrixRotationWorld.elements[ 6 ];
+					ribbon.matrix.elements[ 10 ] = ribbon.matrixRotationWorld.elements[ 10 ];
 
 					ribbon.matrix.multiplySelf( tmpRot );
 
@@ -212,6 +207,24 @@
 				composer.addPass( effectBloom );
 				composer.addPass( effectScreen );
 
+				//
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function onWindowResize() {
+
+				windowHalfX = window.innerWidth / 2;
+				windowHalfY = window.innerHeight / 2;
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+				composer.reset();
+
 			}
 
 			function onDocumentMouseMove( event ) {
@@ -223,7 +236,7 @@
 
 			function onDocumentTouchStart( event ) {
 
-				if ( event.touches.length == 1 ) {
+				if ( event.touches.length === 1 ) {
 
 					event.preventDefault();
 
@@ -231,11 +244,12 @@
 					mouseY = event.touches[ 0 ].pageY - windowHalfY;
 
 				}
+
 			}
 
 			function onDocumentTouchMove( event ) {
 
-				if ( event.touches.length == 1 ) {
+				if ( event.touches.length === 1 ) {
 
 					event.preventDefault();
 
@@ -273,13 +287,13 @@
 					z  =  10 * Math.sin( i2 * 0.1 + time*30 );
 					z2 =  20 * Math.cos( Math.sin( i2 * 0.1 + time * 20 ) );
 
-					geometry.vertices[ i2 ].position.z = z;
-					geometry2.vertices[ i2 ].position.z = z2;
+					geometry.vertices[ i2 ].z = z;
+					geometry2.vertices[ i2 ].z = z2;
 
 				}
 
-				geometry.__dirtyVertices = true;
-				geometry2.__dirtyVertices = true;
+				geometry.verticesNeedUpdate = true;
+				geometry2.verticesNeedUpdate = true;
 
 				for( i = 0; i < nribbons; i++ ) {
 

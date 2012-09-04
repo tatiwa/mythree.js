@@ -5,23 +5,43 @@
 
 THREE.ImageUtils = {
 
-	crossOrigin: '',
+	crossOrigin: 'anonymous',
 
-	loadTexture: function ( path, mapping, callback ) {
+	loadTexture: function ( url, mapping, onLoad, onError ) {
 
-		var image = new Image(), texture = new THREE.Texture( image, mapping );
+		var image = new Image();
+		var texture = new THREE.Texture( image, mapping );
 
-		image.onload = function () { texture.needsUpdate = true; if ( callback ) callback( this ); };
-		image.crossOrigin = this.crossOrigin;
-		image.src = path;
+		var loader = new THREE.ImageLoader();
+
+		loader.addEventListener( 'load', function ( event ) {
+
+			texture.image = event.content;
+			texture.needsUpdate = true;
+
+			if ( onLoad ) onLoad( texture );
+
+		} );
+
+		loader.addEventListener( 'error', function ( event ) {
+
+			if ( onError ) onError( event.message );
+
+		} );
+
+		loader.crossOrigin = this.crossOrigin;
+		loader.load( url, image );
 
 		return texture;
 
 	},
 
-	loadTextureCube: function ( array, mapping, callback ) {
+	loadTextureCube: function ( array, mapping, onLoad ) {
 
-		var i, l, images = [], texture = new THREE.Texture( images, mapping );
+		var i, l, images = [];
+		var texture = new THREE.Texture( images, mapping );
+
+		texture.flipY = false;
 
 		images.loadCount = 0;
 
@@ -31,12 +51,17 @@ THREE.ImageUtils = {
 			images[ i ].onload = function () {
 
 				images.loadCount += 1;
-				if ( images.loadCount === 6 ) texture.needsUpdate = true;
-				if ( callback ) callback( this );
+
+				if ( images.loadCount === 6 ) {
+
+					texture.needsUpdate = true;
+					if ( onLoad ) onLoad();
+
+				}
 
 			};
 
-			images[ i ].crossOrigin = '';
+			images[ i ].crossOrigin = this.crossOrigin;
 			images[ i ].src = array[ i ];
 
 		}
@@ -86,12 +111,12 @@ THREE.ImageUtils = {
 
 		for ( var x = 0; x < width; x ++ ) {
 
-			for ( var y = 1; y < height; y ++ ) {
+			for ( var y = 0; y < height; y ++ ) {
 
-				var ly = y - 1 < 0 ? height - 1 : y - 1;
-				var uy = ( y + 1 ) % height;
-				var lx = x - 1 < 0 ? width - 1 : x - 1;
-				var ux = ( x + 1 ) % width;
+				var ly = y - 1 < 0 ? 0 : y - 1;
+				var uy = y + 1 > height - 1 ? height - 1 : y + 1;
+				var lx = x - 1 < 0 ? 0 : x - 1;
+				var ux = x + 1 > width - 1 ? width - 1 : x + 1;
 
 				var points = [];
 				var origin = [ 0, 0, data[ ( y * width + x ) * 4 ] / 255 * depth ];
@@ -134,7 +159,7 @@ THREE.ImageUtils = {
 				var idx = ( y * width + x ) * 4;
 
 				output[ idx ] = ( ( normal[ 0 ] + 1.0 ) / 2.0 * 255 ) | 0;
-				output[ idx + 1 ] = ( ( normal[ 1 ] + 1.0 / 2.0 ) * 255 ) | 0;
+				output[ idx + 1 ] = ( ( normal[ 1 ] + 1.0 ) / 2.0 * 255 ) | 0;
 				output[ idx + 2 ] = ( normal[ 2 ] * 255 ) | 0;
 				output[ idx + 3 ] = 255;
 
@@ -145,6 +170,30 @@ THREE.ImageUtils = {
 		context.putImageData( imageData, 0, 0 );
 
 		return canvas;
+
+	},
+
+	generateDataTexture: function ( width, height, color ) {
+
+		var size = width * height;
+		var data = new Uint8Array( 3 * size );
+
+		var r = Math.floor( color.r * 255 );
+		var g = Math.floor( color.g * 255 );
+		var b = Math.floor( color.b * 255 );
+
+		for ( var i = 0; i < size; i ++ ) {
+
+			data[ i * 3 ] 	  = r;
+			data[ i * 3 + 1 ] = g;
+			data[ i * 3 + 2 ] = b;
+
+		}
+
+		var texture = new THREE.DataTexture( data, width, height, THREE.RGBFormat );
+		texture.needsUpdate = true;
+
+		return texture;
 
 	}
 

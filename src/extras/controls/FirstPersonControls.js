@@ -14,15 +14,16 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	this.movementSpeed = 1.0;
 	this.lookSpeed = 0.005;
 
-	this.noFly = false;
 	this.lookVertical = true;
 	this.autoForward = false;
+	// this.invertVertical = false;
 
 	this.activeLook = true;
 
 	this.heightSpeed = false;
 	this.heightCoef = 1.0;
 	this.heightMin = 0.0;
+	this.heightMax = 1.0;
 
 	this.constrainVertical = false;
 	this.verticalMin = 0;
@@ -46,18 +47,32 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 
 	this.mouseDragOn = false;
 
-	if ( this.domElement === document ) {
+	this.viewHalfX = 0;
+	this.viewHalfY = 0;
 
-		this.viewHalfX = window.innerWidth / 2;
-		this.viewHalfY = window.innerHeight / 2;
+	if ( this.domElement !== document ) {
 
-	} else {
-
-		this.viewHalfX = this.domElement.offsetWidth / 2;
-		this.viewHalfY = this.domElement.offsetHeight / 2;
 		this.domElement.setAttribute( 'tabindex', -1 );
 
 	}
+
+	//
+
+	this.handleResize = function () {
+
+		if ( this.domElement === document ) {
+
+			this.viewHalfX = window.innerWidth / 2;
+			this.viewHalfY = window.innerHeight / 2;
+
+		} else {
+
+			this.viewHalfX = this.domElement.offsetWidth / 2;
+			this.viewHalfY = this.domElement.offsetHeight / 2;
+
+		}
+
+	};
 
 	this.onMouseDown = function ( event ) {
 
@@ -123,7 +138,9 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 
 	this.onKeyDown = function ( event ) {
 
-		switch( event.keyCode ) {
+		//event.preventDefault();
+
+		switch ( event.keyCode ) {
 
 			case 38: /*up*/
 			case 87: /*W*/ this.moveForward = true; break;
@@ -171,11 +188,11 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 
 	this.update = function( delta ) {
 		var actualMoveSpeed = 0;
-		
+
 		if ( this.freeze ) {
-			
+
 			return;
-			
+
 		} else {
 
 			if ( this.heightSpeed ) {
@@ -211,7 +228,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 			}
 
 			this.lon += this.mouseX * actualLookSpeed;
-			if( this.lookVertical ) this.lat -= this.mouseY * actualLookSpeed;
+			if( this.lookVertical ) this.lat -= this.mouseY * actualLookSpeed; // * this.invertVertical?-1:1;
 
 			this.lat = Math.max( - 85, Math.min( 85, this.lat ) );
 			this.phi = ( 90 - this.lat ) * Math.PI / 180;
@@ -277,5 +294,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 		};
 
 	};
+
+	this.handleResize();
 
 };

@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<title>three.js canvas - sandbox</title>
@@ -15,7 +15,7 @@
 	</head>
 	<body>
 
-		<script src="../build/Three.js"></script>
+		<script src="../build/three.min.js"></script>
 
 		<script src="js/Stats.js"></script>
 
@@ -63,14 +63,12 @@
 
 				scene = new THREE.Scene();
 
-				scene.add( camera );
-
 
 				// Grid
 
 				var geometry = new THREE.Geometry();
-				geometry.vertices.push( new THREE.Vertex( new THREE.Vector3( - 500, 0, 0 ) ) );
-				geometry.vertices.push( new THREE.Vertex( new THREE.Vector3( 500, 0, 0 ) ) );
+				geometry.vertices.push( new THREE.Vector3( - 500, 0, 0 ) );
+				geometry.vertices.push( new THREE.Vector3( 500, 0, 0 ) );
 
 				var material = new THREE.LineBasicMaterial( { color: 0x000000, opacity: 0.5 } );
 
@@ -91,8 +89,7 @@
 
 				objects = [];
 
-				geometry = new THREE.IcosahedronGeometry( 1 );
-				geometry.applyMatrix( new THREE.Matrix4().setScale( 100, 100, 100 ) );
+				geometry = new THREE.IcosahedronGeometry( 100, 1 );
 
 				material = new THREE.MeshBasicMaterial( { envMap: THREE.ImageUtils.loadTexture( 'textures/metal.jpg', new THREE.SphericalReflectionMapping() ), overdraw: true } );
 
@@ -156,6 +153,23 @@
 
 				document.addEventListener( 'keydown', onDocumentKeyDown, false );
 				document.addEventListener( 'keyup', onDocumentKeyUp, false );
+
+				//
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function onWindowResize() {
+
+				windowHalfX = window.innerWidth / 2;
+				windowHalfY = window.innerHeight / 2;
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
 			}
 
 			function onDocumentKeyDown( event ) {

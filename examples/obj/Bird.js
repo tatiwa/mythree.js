@@ -25,7 +25,7 @@ var Bird = function () {
 
 	function v( x, y, z ) {
 
-		scope.vertices.push( new THREE.Vertex( new THREE.Vector3( x, y, z ) ) );
+		scope.vertices.push( new THREE.Vector3( x, y, z ) );
 
 	}
 
@@ -37,5 +37,4 @@ var Bird = function () {
 
 }
 
-Bird.prototype = new THREE.Geometry();
-Bird.prototype.constructor = Bird;
+Bird.prototype = Object.create( THREE.Geometry.prototype );

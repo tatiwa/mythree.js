@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<title>three.js webgl - postprocessing</title>
@@ -40,7 +40,7 @@
 
 		<div id="container"></div>
 
-		<script src="../build/Three.js"></script>
+		<script src="../build/three.min.js"></script>
 
 
 		<script src="js/ShaderExtras.js"></script>
@@ -67,8 +67,11 @@
 
 			var cameraOrtho, cameraPerspective, sceneModel, sceneBG, renderer, mesh, directionalLight;
 
-			var halfWidth = window.innerWidth / 2;
-			var halfHeight = window.innerHeight / 2;
+			var width = window.innerWidth || 2;
+			var height = window.innerHeight || 2;
+
+			var halfWidth = width / 2;
+			var halfHeight = height / 2;
 
 			var materialColor, material2D, quadBG, quadMask, renderScene;
 
@@ -85,19 +88,16 @@
 
 				//
 
-				sceneModel = new THREE.Scene();
-				sceneBG = new THREE.Scene();
-
-				//
-
 				cameraOrtho = new THREE.OrthographicCamera( -halfWidth, halfWidth, halfHeight, -halfHeight, -10000, 10000 );
 				cameraOrtho.position.z = 100;
 
-				cameraPerspective = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 10000 );
+				cameraPerspective = new THREE.PerspectiveCamera( 50, width / height, 1, 10000 );
 				cameraPerspective.position.z = 900;
 
-				sceneModel.add( cameraPerspective );
-				sceneBG.add( cameraOrtho );
+				//
+
+				sceneModel = new THREE.Scene();
+				sceneBG = new THREE.Scene();
 
 				//
 
@@ -112,28 +112,25 @@
 				//
 
 				var materialColor = new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( "textures/cube/SwedishRoyalCastle/pz.jpg" ), depthTest: false } );
-				var plane = new THREE.PlaneGeometry( 1, 1 );
 
-				quadBG = new THREE.Mesh( plane, materialColor );
+				quadBG = new THREE.Mesh( new THREE.PlaneGeometry( 1, 1 ), materialColor );
 				quadBG.position.z = -500;
-				quadBG.scale.set( window.innerWidth, window.innerHeight, 1 );
+				quadBG.scale.set( width, height, 1 );
 				sceneBG.add( quadBG );
 
 				//
 
 				var sceneMask = new THREE.Scene();
 
-				var plane = new THREE.PlaneGeometry( 1, 1 );
-
-				quadMask = new THREE.Mesh( plane, new THREE.MeshBasicMaterial( { color: 0xffaa00 } )  );
+				quadMask = new THREE.Mesh( new THREE.PlaneGeometry( 1, 1 ), new THREE.MeshBasicMaterial( { color: 0xffaa00 } )  );
 				quadMask.position.z = -300;
-				quadMask.scale.set( window.innerWidth / 2, window.innerHeight/2, 1 );
+				quadMask.scale.set( width / 2, height / 2, 1 );
 				sceneMask.add( quadMask );
 
 				//
 
 				renderer = new THREE.WebGLRenderer( { antialias: false } );
-				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setSize( width, height );
 				renderer.setClearColorHex( 0x000000, 1 );
 				renderer.autoClear = false;
 
@@ -179,8 +176,8 @@
 
 				var effectHBlur = new THREE.ShaderPass( THREE.ShaderExtras[ "horizontalBlur" ] );
 				var effectVBlur = new THREE.ShaderPass( THREE.ShaderExtras[ "verticalBlur" ] );
-				effectHBlur.uniforms[ 'h' ].value = 2 / ( window.innerWidth/2 );
-				effectVBlur.uniforms[ 'v' ].value = 2 / ( window.innerHeight/2 );
+				effectHBlur.uniforms[ 'h' ].value = 2 / ( width/2 );
+				effectVBlur.uniforms[ 'v' ].value = 2 / ( height/2 );
 
 				var effectColorify1 = new THREE.ShaderPass( THREE.ShaderExtras[ "colorify" ] );
 				var effectColorify2 = new THREE.ShaderPass( THREE.ShaderExtras[ "colorify" ] );
@@ -202,12 +199,19 @@
 
 				//
 
+				rtParameters = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat, stencilBuffer: true };
+
+				var rtWidth  = width / 2;
+				var rtHeight = height / 2;
+
+				//
+
 				var renderBackground = new THREE.RenderPass( sceneBG, cameraOrtho );
 				var renderModel = new THREE.RenderPass( sceneModel, cameraPerspective );
 
 				renderModel.clear = false;
 
-				composerScene = new THREE.EffectComposer( renderer );
+				composerScene = new THREE.EffectComposer( renderer, new THREE.WebGLRenderTarget( rtWidth * 2, rtHeight * 2, rtParameters ) );
 
 				composerScene.addPass( renderBackground );
 				composerScene.addPass( renderModel );
@@ -219,11 +223,6 @@
 				//
 
 				renderScene = new THREE.TexturePass( composerScene.renderTarget2 );
-
-				rtParameters = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat, stencilBufer: true };
-
-				var rtWidth  = window.innerWidth / 2;
-				var rtHeight = window.innerHeight / 2;
 
 				//
 
@@ -299,7 +298,7 @@
 
 				cameraOrtho.updateProjectionMatrix();
 
-				composerScene.reset();
+				composerScene.reset( new THREE.WebGLRenderTarget( halfWidth * 2, halfHeight * 2, rtParameters ) );
 
 				composer1.reset( new THREE.WebGLRenderTarget( halfWidth, halfHeight, rtParameters ) );
 				composer2.reset( new THREE.WebGLRenderTarget( halfWidth, halfHeight, rtParameters ) );
@@ -308,8 +307,8 @@
 
 				renderScene.uniforms[ "tDiffuse" ].texture = composerScene.renderTarget2;
 
-				quadBG.scale.set( window.innerWidth, window.innerHeight, 1 );
-				quadMask.scale.set( window.innerWidth / 2, window.innerHeight / 2, 1 );
+				quadBG.scale.set( window.innerWidth, 1, window.innerHeight );
+				quadMask.scale.set( window.innerWidth / 2, 1, window.innerHeight / 2 );
 
 			}
 
@@ -329,7 +328,7 @@
 				var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
 
 				uniforms[ "tNormal" ].texture = THREE.ImageUtils.loadTexture( "obj/leeperrysmith/Infinite-Level_02_Tangent_SmoothUV.jpg" );
-				uniforms[ "uNormalScale" ].value = - 0.75;
+				uniforms[ "uNormalScale" ].value = 0.75;
 
 				uniforms[ "tDiffuse" ].texture = THREE.ImageUtils.loadTexture( "obj/leeperrysmith/Map-COL.jpg" );
 

@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<title>three.js webgl - materials - normal map [Lee Perry-Smith]</title>
@@ -50,7 +50,7 @@
 			</div>
 		</div>
 
-		<script src="../build/Three.js"></script>
+		<script src="../build/three.min.js"></script>
 
 		<script src="js/Detector.js"></script>
 		<script src="js/Stats.js"></script>
@@ -98,13 +98,10 @@
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
 
+				camera = new THREE.PerspectiveCamera( 27, window.innerWidth / window.innerHeight, 1, 10000 );
+				camera.position.z = 1200;
+
 				scene = new THREE.Scene();
-
-				// CAMERA
-
-				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
-				camera.position.z = 900;
-				scene.add( camera );
 
 				// LIGHTS
 
@@ -122,13 +119,13 @@
 
 				// material parameters
 
-				var ambient = 0x111111, diffuse = 0xbbbbbb, specular = 0x171717, shininess = 50;
+				var ambient = 0x111111, diffuse = 0xbbbbbb, specular = 0x060606, shininess = 35;
 
 				var shader = THREE.ShaderUtils.lib[ "normal" ];
 				var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
 
 				uniforms[ "tNormal" ].texture = THREE.ImageUtils.loadTexture( "obj/leeperrysmith/Infinite-Level_02_Tangent_SmoothUV.jpg" );
-				uniforms[ "uNormalScale" ].value = - 0.8;
+				uniforms[ "uNormalScale" ].value = 0.8;
 
 				uniforms[ "tDiffuse" ].texture = THREE.ImageUtils.loadTexture( "obj/leeperrysmith/Map-COL.jpg" );
 				uniforms[ "tSpecular" ].texture = THREE.ImageUtils.loadTexture( "obj/leeperrysmith/Map-SPEC.jpg" );
@@ -163,6 +160,7 @@
 
 				renderer.gammaInput = true;
 				renderer.gammaOutput = true;
+				renderer.physicallyBasedShading = true;
 
 				//
 

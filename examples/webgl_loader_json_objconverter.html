@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<title>three.js webgl - io - OBJ converter</title>
@@ -35,7 +35,7 @@
 			<a href="http://sketchup.google.com/3dwarehouse/details?mid=f526cc4abf7cb68d76cab47c765b7255">iClone</a>.
 		</div>
 
-		<script src="../build/Three.js"></script>
+		<script src="../build/three.min.js"></script>
 
 		<script src="js/Detector.js"></script>
 		<script src="js/Stats.js"></script>
@@ -107,9 +107,8 @@
 
 				mesh = new THREE.Mesh( geometry, xm );
 				mesh.position.set( 0, FLOOR, 0 );
-				mesh.rotation.x = Math.PI/2;
+				mesh.rotation.x = - Math.PI / 2;
 				mesh.scale.set( 10, 10, 10 );
-				mesh.doubleSided = true;
 				scene.add( mesh );
 
 				// SPHERES
@@ -126,8 +125,6 @@
 					mesh.position.z = 100 * ( Math.random() - 1 );
 
 					mesh.scale.x = mesh.scale.y = mesh.scale.z = 0.25 * ( Math.random() + 0.5 );
-
-					mesh.overdraw = true;
 
 					scene.add( mesh );
 
@@ -195,6 +192,23 @@
 				//loader.load( "obj/male02/Male02_bin.js", callbackMale );
 				//loader.load( "obj/female02/Female02_bin.js", callbackFemale );
 
+				//
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function onWindowResize() {
+
+				windowHalfX = window.innerWidth / 2;
+				windowHalfY = window.innerHeight / 2;
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				if ( webglRenderer ) webglRenderer.setSize( window.innerWidth, window.innerHeight );
+				if ( canvasRenderer ) canvasRenderer.setSize( window.innerWidth, window.innerHeight );
+
 			}
 
 			function createScene( geometry, x, y, z, b ) {
@@ -202,7 +216,6 @@
 				zmesh = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial() );
 				zmesh.position.set( x, y, z );
 				zmesh.scale.set( 3, 3, 3 );
-				zmesh.overdraw = true;
 				scene.add( zmesh );
 
 				createMaterialsPalette( geometry.materials, 100, b );
@@ -219,7 +232,6 @@
 					mesh.position.x = i * (size + 5) - ( ( materials.length - 1 )* ( size + 5 )/2);
 					mesh.position.y = FLOOR + size/2 + bottom;
 					mesh.position.z = -100;
-					mesh.doubleSided = true;
 					scene.add( mesh );
 
 					// number
@@ -240,7 +252,6 @@
 					mesh.position.x = i * ( size + 5 ) - ( ( materials.length - 1 )* ( size + 5 )/2);
 					mesh.position.y = FLOOR + size/2 + bottom;
 					mesh.position.z = -99;
-					mesh.doubleSided = true;
 					scene.add( mesh );
 
 				}

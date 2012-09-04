@@ -16,8 +16,7 @@ THREE.Shape = function ( ) {
 
 };
 
-THREE.Shape.prototype = new THREE.Path();
-THREE.Shape.prototype.constructor = THREE.Path;
+THREE.Shape.prototype = Object.create( THREE.Path.prototype );
 
 // Convenience method to return ExtrudeGeometry
 
@@ -71,6 +70,16 @@ THREE.Shape.prototype.extractAllPoints = function ( divisions ) {
 		holes: this.getPointsHoles( divisions )
 
 	};
+
+};
+
+THREE.Shape.prototype.extractPoints = function ( divisions ) {
+
+	if (this.useSpacedPoints) {
+		return this.extractAllSpacedPoints(divisions);
+	}
+
+	return this.extractAllPoints(divisions);
 
 };
 

@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<title>three.js canvas - point light smooth</title>
@@ -36,10 +36,10 @@
 		<div id="container"></div>
 		<div id="info">
 			<a href="http://github.com/mrdoob/three.js" target="_blank">three.js</a> - point lights demo.<br />
-			Walt Disney head by <a href="http://www.davidoreilly.com/2009/01/walt-disneys-head-on-a-plate" target="_blank">David OReilly</a>
+			Walt Disney head by <a href="http://davidoreilly.com/post/18087489343/disneyhead" target="_blank">David OReilly</a>
 		</div>
 
-		<script src="../build/Three.js"></script>
+		<script src="../build/three.min.js"></script>
 
 		<script>
 
@@ -60,8 +60,6 @@
 
 				scene = new THREE.Scene();
 
-				scene.add( camera );
-
 				scene.add( new THREE.AmbientLight( 0x00020 ) );
 
 				light1 = new THREE.PointLight( 0xff0040, 1, 50 );
@@ -78,7 +76,6 @@
 
 					context.beginPath();
 					context.arc( 0, 0, 1, 0, PI2, true );
-					context.closePath();
 					context.fill();
 
 				}
@@ -101,7 +98,6 @@
 					geometry.computeVertexNormals();
 
 					mesh = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: 0xffffff, overdraw: true } ) );
-					mesh.overdraw = true;
 					scene.add( mesh );
 
 				} );
@@ -109,6 +105,19 @@
 				renderer = new THREE.CanvasRenderer();
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				container.appendChild( renderer.domElement );
+
+				//
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
 
 			}
 
@@ -124,7 +133,7 @@
 
 			function render() {
 
-				var time = new Date().getTime() * 0.0005;
+				var time = Date.now() * 0.0005;
 
 				if ( mesh ) mesh.rotation.y -= 0.01;
 

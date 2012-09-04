@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<title>three.js webgl - materials - cube reflection [cars]</title>
@@ -55,7 +55,9 @@
 			<div id="buttons_materials" class="bwrap"></div>
 		</div>
 
-		<script src="../build/Three.js"></script>
+		<script src="../build/three.min.js"></script>
+
+		<script src="js/effects/AnaglyphEffect.js"></script>
 
 		<script src="js/Detector.js"></script>
 		<script src="js/Stats.js"></script>
@@ -137,7 +139,7 @@
 
 			var container, stats;
 
-			var camera, scene, renderer;
+			var camera, scene, renderer, effect;
 
 			var m, mi;
 
@@ -159,14 +161,13 @@
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
 
-				scene = new THREE.Scene();
-
 				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 100000 );
-				scene.add( camera );
+
+				scene = new THREE.Scene();
 
 				// LIGHTS
 
-				var ambient = new THREE.AmbientLight( 0x555555 );
+				var ambient = new THREE.AmbientLight( 0x050505 );
 				scene.add( ambient );
 
 				directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
@@ -190,19 +191,24 @@
 
 					fragmentShader: shader.fragmentShader,
 					vertexShader: shader.vertexShader,
-					uniforms: shader.uniforms
+					uniforms: shader.uniforms,
+					side: THREE.BackSide
 
 				} ),
 
 				mesh = new THREE.Mesh( new THREE.CubeGeometry( 100000, 100000, 100000 ), material );
-				mesh.flipSided = true;
 				scene.add( mesh );
 
 				//
 
-				renderer = new THREE.AnaglyphWebGLRenderer();
-				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer = new THREE.WebGLRenderer();
 				renderer.setFaceCulling( 0 );
+
+				var width = window.innerWidth || 2;
+				var height = window.innerHeight || 2;
+
+				effect = new THREE.AnaglyphEffect( renderer );
+				effect.setSize( width, height );
 
 				container.appendChild( renderer.domElement );
 
@@ -455,6 +461,22 @@
 
 				for( var c in CARS ) initCarButton( c );
 
+				//
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function onWindowResize() {
+
+				windowHalfX = window.innerWidth / 2;
+				windowHalfY = window.innerHeight / 2;
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				effect.setSize( window.innerWidth, window.innerHeight );
+
 			}
 
 			function initCarButton( car ) {
@@ -596,14 +618,13 @@
 
 				var timer = -0.0002 * Date.now();
 
-				camera.position.y += ( - mouseY - camera.position.y ) * .05;
-
 				camera.position.x = 1000 * Math.cos( timer );
+				camera.position.y += ( - mouseY - camera.position.y ) * .05;
 				camera.position.z = 1000 * Math.sin( timer );
 
 				camera.lookAt( scene.position );
 
-				renderer.render( scene, camera );
+				effect.render( scene, camera );
 
 				if ( STATS_ENABLED ) stats.update();
 

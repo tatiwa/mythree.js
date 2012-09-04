@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<title>three.js webgl - morph targets - horse</title>
@@ -15,7 +15,7 @@
 	</head>
 	<body>
 
-		<script src="../build/Three.js"></script>
+		<script src="../build/three.min.js"></script>
 
 		<script src="js/Stats.js"></script>
 
@@ -43,14 +43,11 @@
 
 				//
 
-				scene = new THREE.Scene();
-
 				camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 10000 );
 				camera.position.y = 300;
-				scene.add( camera );
-
 				camera.target = new THREE.Vector3( 0, 150, 0 );
 
+				scene = new THREE.Scene();
 
 				//
 
@@ -86,6 +83,19 @@
 				stats.domElement.style.top = '0px';
 				container.appendChild( stats.domElement );
 
+				//
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
 			}
 
 			//
@@ -103,7 +113,7 @@
 			var theta = 0;
 
 			var duration = 1000;
-			var keyframes = 15 /*16*/, interpolation = duration / keyframes;
+			var keyframes = 15, interpolation = duration / keyframes;
 			var lastKeyframe = 0, currentKeyframe = 0;
 
 			function render() {
@@ -121,7 +131,7 @@
 
 					var time = Date.now() % duration;
 
-					var keyframe = Math.floor( time / interpolation ) + 1;
+					var keyframe = Math.floor( time / interpolation );
 
 					if ( keyframe != currentKeyframe ) {
 

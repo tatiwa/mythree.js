@@ -1443,7 +1443,7 @@ var Qrcode = function () {
 
 	function v( x, y, z ) {
 
-		scope.vertices.push( new THREE.Vertex( new THREE.Vector3( x, y, z ) ) );
+		scope.vertices.push( new THREE.Vector3( x, y, z ) );
 
 	}
 
@@ -1461,5 +1461,4 @@ var Qrcode = function () {
 
 }
 
-Qrcode.prototype = new THREE.Geometry();
-Qrcode.prototype.constructor = Qrcode;
+Qrcode.prototype = Object.create( THREE.Geometry.prototype );

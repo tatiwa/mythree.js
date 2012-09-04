@@ -1,10 +1,11 @@
 /**
- * @author mr.doob / http://mrdoob.com/
+ * @author mrdoob / http://mrdoob.com/
  */
 
 THREE.Color = function ( hex ) {
 
 	if ( hex !== undefined ) this.setHex( hex );
+
 	return this;
 
 };
@@ -96,15 +97,41 @@ THREE.Color.prototype = {
 			q = v * ( 1 - ( s * f ) );
 			t = v * ( 1 - ( s * ( 1 - f ) ) );
 
-			switch ( i ) {
+			if ( i === 0 ) {
 
-				case 1: this.r = q; this.g = v; this.b = p; break;
-				case 2: this.r = p; this.g = v; this.b = t; break;
-				case 3: this.r = p; this.g = q; this.b = v; break;
-				case 4: this.r = t; this.g = p; this.b = v; break;
-				case 5: this.r = v; this.g = p; this.b = q; break;
-				case 6: // fall through
-				case 0: this.r = v; this.g = t; this.b = p; break;
+				this.r = v;
+				this.g = t;
+				this.b = p;
+
+			} else if ( i === 1 ) {
+
+				this.r = q;
+				this.g = v;
+				this.b = p;
+
+			} else if ( i === 2 ) {
+
+				this.r = p;
+				this.g = v;
+				this.b = t;
+
+			} else if ( i === 3 ) {
+
+				this.r = p;
+				this.g = q;
+				this.b = v;
+
+			} else if ( i === 4 ) {
+
+				this.r = t;
+				this.g = p;
+				this.b = v;
+
+			} else if ( i === 5 ) {
+
+				this.r = v;
+				this.g = p;
+				this.b = q;
 
 			}
 
@@ -121,6 +148,16 @@ THREE.Color.prototype = {
 		this.r = ( hex >> 16 & 255 ) / 255;
 		this.g = ( hex >> 8 & 255 ) / 255;
 		this.b = ( hex & 255 ) / 255;
+
+		return this;
+
+	},
+
+	lerpSelf: function ( color, alpha ) {
+
+		this.r += ( color.r - this.r ) * alpha;
+		this.g += ( color.g - this.g ) * alpha;
+		this.b += ( color.b - this.b ) * alpha;
 
 		return this;
 

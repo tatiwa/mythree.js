@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<title>three.js webgl - custom attributes [particles][billboards][alphatest]</title>
@@ -31,7 +31,7 @@
 		<div id="info"><a href="http://github.com/mrdoob/three.js" target="_blank">three.js</a> - custom attributes example - particles - billboards - alphatest</div>
 		<div id="container"></div>
 
-		<script src="../build/Three.js"></script>
+		<script src="../build/three.min.js"></script>
 
 		<script src="js/Detector.js"></script>
 		<script src="js/Stats.js"></script>
@@ -93,8 +93,8 @@
 
 		var vc1;
 
-		var WIDTH = window.innerWidth,
-			HEIGHT = window.innerHeight;
+		var WIDTH = window.innerWidth;
+		var HEIGHT = window.innerHeight;
 
 		init();
 		animate();
@@ -105,8 +105,6 @@
 			camera.position.z = 500;
 
 			scene = new THREE.Scene();
-
-			scene.add( camera );
 
 			attributes = {
 
@@ -140,15 +138,17 @@
 
 			for ( var i = 0; i < 100000; i ++ ) {
 
-				vector = new THREE.Vector3( Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1 );
+				var vertex = new THREE.Vector3();
+				vertex.x = Math.random() * 2 - 1;
+				vertex.y = Math.random() * 2 - 1;
+				vertex.z = Math.random() * 2 - 1;
+				vertex.multiplyScalar( radius );
 
-				vector.multiplyScalar( radius );
+				if ( ( vertex.x > inner || vertex.x < -inner ) ||
+				     ( vertex.y > inner || vertex.y < -inner ) ||
+				     ( vertex.z > inner || vertex.z < -inner )  )
 
-				if ( ( vector.x > inner || vector.x < -inner ) ||
-				     ( vector.y > inner || vector.y < -inner ) ||
-				     ( vector.z > inner || vector.z < -inner )  )
-
-				geometry.vertices.push( new THREE.Vertex( vector ) );
+				geometry.vertices.push( vertex );
 
 			}
 
@@ -236,6 +236,19 @@
 			stats.domElement.style.position = 'absolute';
 			stats.domElement.style.top = '0px';
 			container.appendChild( stats.domElement );
+
+			//
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+		}
+
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
 
 		}
 

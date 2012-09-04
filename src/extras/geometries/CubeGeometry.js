@@ -1,5 +1,5 @@
 /**
- * @author mr.doob / http://mrdoob.com/
+ * @author mrdoob / http://mrdoob.com/
  * based on http://papervision3d.googlecode.com/svn/trunk/as3/trunk/src/org/papervision3d/objects/primitives/Cube.as
  */
 
@@ -105,7 +105,7 @@ THREE.CubeGeometry = function ( width, height, depth, segmentsWidth, segmentsHei
 				vector[ v ] = ( iy * segment_height - height_half ) * vdir;
 				vector[ w ] = depth;
 
-				scope.vertices.push( new THREE.Vertex( vector ) );
+				scope.vertices.push( vector );
 
 			}
 
@@ -127,10 +127,10 @@ THREE.CubeGeometry = function ( width, height, depth, segmentsWidth, segmentsHei
 
 				scope.faces.push( face );
 				scope.faceVertexUvs[ 0 ].push( [
-							new THREE.UV( ix / gridX, iy / gridY ),
-							new THREE.UV( ix / gridX, ( iy + 1 ) / gridY ),
-							new THREE.UV( ( ix + 1 ) / gridX, ( iy + 1 ) / gridY ),
-							new THREE.UV( ( ix + 1 ) / gridX, iy / gridY )
+							new THREE.UV( ix / gridX, 1 - iy / gridY ),
+							new THREE.UV( ix / gridX, 1 - ( iy + 1 ) / gridY ),
+							new THREE.UV( ( ix + 1 ) / gridX, 1- ( iy + 1 ) / gridY ),
+							new THREE.UV( ( ix + 1 ) / gridX, 1 - iy / gridY )
 						] );
 
 			}
@@ -144,5 +144,4 @@ THREE.CubeGeometry = function ( width, height, depth, segmentsWidth, segmentsHei
 
 };
 
-THREE.CubeGeometry.prototype = new THREE.Geometry();
-THREE.CubeGeometry.prototype.constructor = THREE.CubeGeometry;
+THREE.CubeGeometry.prototype = Object.create( THREE.Geometry.prototype );

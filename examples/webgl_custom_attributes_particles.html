@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<title>three.js webgl - custom attributes [particles]</title>
@@ -34,7 +34,7 @@
 		<div id="info"><a href="http://github.com/mrdoob/three.js" target="_blank">three.js</a> - custom attributes example - particles</div>
 		<div id="container"></div>
 
-		<script src="../build/Three.js"></script>
+		<script src="../build/three.min.js"></script>
 
 		<script src="js/Detector.js"></script>
 		<script src="js/Stats.js"></script>
@@ -89,8 +89,8 @@
 
 		var noise = [];
 
-		var WIDTH = window.innerWidth,
-			HEIGHT = window.innerHeight;
+		var WIDTH = window.innerWidth;
+		var HEIGHT = window.innerHeight;
 
 		init();
 		animate();
@@ -101,8 +101,6 @@
 			camera.position.z = 300;
 
 			scene = new THREE.Scene();
-
-			scene.add( camera );
 
 			attributes = {
 
@@ -138,10 +136,13 @@
 
 			for ( var i = 0; i < 100000; i++ ) {
 
-				vector = new THREE.Vector3( Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1 );
-				vector.multiplyScalar( radius );
+				var vertex = new THREE.Vector3();
+				vertex.x = Math.random() * 2 - 1;
+				vertex.y = Math.random() * 2 - 1;
+				vertex.z = Math.random() * 2 - 1;
+				vertex.multiplyScalar( radius );
 
-				geometry.vertices.push( new THREE.Vertex( vector ) );
+				geometry.vertices.push( vertex );
 
 			}
 
@@ -160,7 +161,7 @@
 				values_size[ v ] = 10;
 				values_color[ v ] = new THREE.Color( 0xffaa00 );
 
-				if ( vertices[ v ].position.x < 0 )
+				if ( vertices[ v ].x < 0 )
 					values_color[ v ].setHSV( 0.5 + 0.1 * ( v / vertices.length ), 0.7, 0.9 );
 				else
 					values_color[ v ].setHSV( 0.0 + 0.1 * ( v / vertices.length ), 0.9, 0.9 );
@@ -179,6 +180,19 @@
 			stats.domElement.style.position = 'absolute';
 			stats.domElement.style.top = '0px';
 			container.appendChild( stats.domElement );
+
+			//
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+		}
+
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize( window.innerWidth, window.innerHeight );
 
 		}
 

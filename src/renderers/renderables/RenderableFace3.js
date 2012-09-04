@@ -1,5 +1,5 @@
 /**
- * @author mr.doob / http://mrdoob.com/
+ * @author mrdoob / http://mrdoob.com/
  */
 
 THREE.RenderableFace3 = function () {
@@ -15,7 +15,6 @@ THREE.RenderableFace3 = function () {
 	this.vertexNormalsWorld = [ new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3() ];
 
 	this.material = null;
-	this.faceMaterial = null;
 	this.uvs = [[]];
 
 	this.z = null;

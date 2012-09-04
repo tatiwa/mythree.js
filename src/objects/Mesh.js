@@ -1,5 +1,5 @@
 /**
- * @author mr.doob / http://mrdoob.com/
+ * @author mrdoob / http://mrdoob.com/
  * @author alteredq / http://alteredqualia.com/
  * @author mikael emtinger / http://gomo.se/
  */
@@ -9,20 +9,13 @@ THREE.Mesh = function ( geometry, material ) {
 	THREE.Object3D.call( this );
 
 	this.geometry = geometry;
-	this.material = material;
-
-	if ( material instanceof Array ) {
-
-		console.warn( 'DEPRECATED: Mesh material can no longer be an Array. Using material at index 0...' );
-		this.material = material[ 0 ];
-
-	}
+	this.material = ( material !== undefined ) ? material : new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff, wireframe: true } );
 
 	if ( this.geometry ) {
 
 		// calc bound radius
 
-		if( ! this.geometry.boundingSphere ) {
+		if ( ! this.geometry.boundingSphere ) {
 
 			this.geometry.computeBoundingSphere();
 
@@ -53,9 +46,7 @@ THREE.Mesh = function ( geometry, material ) {
 
 }
 
-THREE.Mesh.prototype = new THREE.Object3D();
-THREE.Mesh.prototype.constructor = THREE.Mesh;
-THREE.Mesh.prototype.supr = THREE.Object3D.prototype;
+THREE.Mesh.prototype = Object.create( THREE.Object3D.prototype );
 
 
 /*

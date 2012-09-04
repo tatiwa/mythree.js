@@ -7,7 +7,7 @@ THREE.ParticleSystem = function ( geometry, material ) {
 	THREE.Object3D.call( this );
 
 	this.geometry = geometry;
-	this.material = material;
+	this.material = ( material !== undefined ) ? material : new THREE.ParticleBasicMaterial( { color: Math.random() * 0xffffff } );
 
 	this.sortParticles = false;
 
@@ -29,5 +29,4 @@ THREE.ParticleSystem = function ( geometry, material ) {
 
 };
 
-THREE.ParticleSystem.prototype = new THREE.Object3D();
-THREE.ParticleSystem.prototype.constructor = THREE.ParticleSystem;
+THREE.ParticleSystem.prototype = Object.create( THREE.Object3D.prototype );

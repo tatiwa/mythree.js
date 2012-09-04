@@ -159,7 +159,7 @@ TEMPLATE_FILE_ASCII = u"""\
 
     "metadata" :
     {
-        "formatVersion" : 3,
+        "formatVersion" : 3.1,
         "sourceFile"    : "%(fname)s",
         "generatedBy"   : "OBJConverter",
         "vertices"      : %(nvertex)d,
@@ -196,7 +196,7 @@ TEMPLATE_FILE_BIN = u"""\
 
     "metadata" :
     {
-        "formatVersion" : 3,
+        "formatVersion" : 3.1,
         "sourceFile"    : "%(fname)s",
         "generatedBy"   : "OBJConverter",
         "vertices"      : %(nvertex)d,
@@ -353,7 +353,7 @@ def veckey3(v):
 # MTL parser
 # #####################################################
 def texture_relative_path(fullpath):
-    texture_file = os.path.basename(fullpath)
+    texture_file = os.path.basename(fullpath.replace("\\", "/"))
     return texture_file
 
 def parse_mtl(fname):
@@ -368,8 +368,11 @@ def parse_mtl(fname):
 
             # Material start
             # newmtl identifier
-            if chunks[0] == "newmtl" and len(chunks) == 2:
-                identifier = chunks[1]
+            if chunks[0] == "newmtl":
+                if len(chunks) > 1:
+                    identifier = chunks[1]
+                else:
+                    identifier = ""
                 if not identifier in materials:
                     materials[identifier] = {}
 
@@ -490,6 +493,7 @@ def parse_obj(fname):
     faces = []
 
     materials = {}
+    material = ""
     mcounter = 0
     mcurrent = 0
 
@@ -536,7 +540,7 @@ def parse_obj(fname):
                 uv_index = []
                 normal_index = []
 
-                
+
                 # Precompute vert / normal / uv lists
                 # for negative index lookup
                 vertlen = len(vertices) + 1
@@ -581,8 +585,11 @@ def parse_obj(fname):
                 mtllib = chunks[1]
 
             # Material
-            if chunks[0] == "usemtl" and len(chunks) == 2:
-                material = chunks[1]
+            if chunks[0] == "usemtl":
+                if len(chunks) > 1:
+                    material = chunks[1]
+                else:
+                    material = ""
                 if not material in materials:
                     mcurrent = mcounter
                     materials[material] = mcounter
@@ -692,7 +699,7 @@ def generate_normal(n):
     return TEMPLATE_N % (n[0], n[1], n[2])
 
 def generate_uv(uv):
-    return TEMPLATE_UV % (uv[0], 1.0 - uv[1])
+    return TEMPLATE_UV % (uv[0], uv[1])
 
 def generate_color_rgb(c):
     return TEMPLATE_COLOR % (c[0], c[1], c[2])
@@ -1325,7 +1332,7 @@ def convert_binary(infile, outfile):
     # u float   4
     # v float   4
     for uv in uvs:
-        data = struct.pack('<ff', uv[0], 1.0-uv[1])
+        data = struct.pack('<ff', uv[0], uv[1])
         buffer.append(data)
 
     # padding

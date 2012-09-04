@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<title>three.js canvas - combo camera - orthographic + perspective</title>
@@ -20,7 +20,7 @@
 	</head>
 	<body>
 
-		<script src="../build/Three.js"></script>
+		<script src="../build/three.min.js"></script>
 		<script src="../src/extras/cameras/CombinedCamera.js"></script>
 
 		<script src="js/Stats.js"></script>
@@ -114,13 +114,11 @@
 
 				scene = new THREE.Scene();
 
-				scene.add( camera );
-
 				// Grid
 
 				var geometry = new THREE.Geometry();
-				geometry.vertices.push( new THREE.Vertex( new THREE.Vector3( - 500, 0, 0 ) ) );
-				geometry.vertices.push( new THREE.Vertex( new THREE.Vector3( 500, 0, 0 ) ) );
+				geometry.vertices.push( new THREE.Vector3( - 500, 0, 0 ) );
+				geometry.vertices.push( new THREE.Vector3( 500, 0, 0 ) );
 
 				for ( var i = 0; i <= 20; i ++ ) {
 
@@ -143,7 +141,6 @@
 				for ( var i = 0; i < 100; i ++ ) {
 
 					var cube = new THREE.Mesh( geometry, material );
-					cube.overdraw = true;
 
 					cube.scale.y = Math.floor( Math.random() * 2 + 1 );
 
@@ -184,6 +181,17 @@
 				stats.domElement.style.top = '0px';
 				container.appendChild( stats.domElement );
 
+				window.addEventListener( 'resize', onWindowResize, false );
+
+				function onWindowResize(){
+
+					camera.setSize( window.innerWidth, window.innerHeight );
+					camera.updateProjectionMatrix();
+
+					renderer.setSize( window.innerWidth, window.innerHeight );
+
+				}
+
 			}
 
 			//
@@ -199,7 +207,7 @@
 
 			function render() {
 
-				var timer = new Date().getTime() * 0.0001;
+				var timer = Date.now() * 0.0001;
 
 				camera.position.x = Math.cos( timer ) * 200;
 				camera.position.z = Math.sin( timer ) * 200;

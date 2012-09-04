@@ -1,6 +1,6 @@
 /**
  * @author sroucheray / http://sroucheray.org/
- * @author mr.doob / http://mrdoob.com/
+ * @author mrdoob / http://mrdoob.com/
  */
 
 THREE.AxisHelper = function () {
@@ -8,8 +8,8 @@ THREE.AxisHelper = function () {
 	THREE.Object3D.call( this );
 
 	var lineGeometry = new THREE.Geometry();
-	lineGeometry.vertices.push( new THREE.Vertex() );
-	lineGeometry.vertices.push( new THREE.Vertex( new THREE.Vector3( 0, 100, 0 ) ) );
+	lineGeometry.vertices.push( new THREE.Vector3() );
+	lineGeometry.vertices.push( new THREE.Vector3( 0, 100, 0 ) );
 
 	var coneGeometry = new THREE.CylinderGeometry( 0, 5, 25, 5, 1 );
 
@@ -48,5 +48,4 @@ THREE.AxisHelper = function () {
 
 };
 
-THREE.AxisHelper.prototype = new THREE.Object3D();
-THREE.AxisHelper.prototype.constructor = THREE.AxisHelper;
+THREE.AxisHelper.prototype = Object.create( THREE.Object3D.prototype );

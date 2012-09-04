@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<title>three.js webgl - materials - cube reflection [cars]</title>
@@ -55,7 +55,7 @@
 			<div id="buttons_materials" class="bwrap"></div>
 		</div>
 
-		<script src="../build/Three.js"></script>
+		<script src="../build/three.min.js"></script>
 
 		<script src="js/Detector.js"></script>
 		<script src="js/Stats.js"></script>
@@ -138,7 +138,7 @@
 			var container, stats;
 
 			var camera, scene, renderer;
-			var cameraCube, sceneCube, cubeTarget;
+			var cameraCube, sceneCube;
 
 			var m, mi;
 
@@ -160,23 +160,19 @@
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
 
+				// CAMERAS
+
+				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 100000 );
+				cameraCube = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 100000 );
+
 				// SCENE
 
 				scene = new THREE.Scene();
 				sceneCube = new THREE.Scene();
 
-				// CAMERAS
-
-				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 100000 );
-				cameraCube = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 100000 );
-				cubeTarget = new THREE.Vector3( 0, 0, 0 );
-
-				scene.add( camera );
-				sceneCube.add( cameraCube );
-
 				// LIGHTS
 
-				var ambient = new THREE.AmbientLight( 0x555555 );
+				var ambient = new THREE.AmbientLight( 0x050505 );
 				scene.add( ambient );
 
 				directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
@@ -201,12 +197,12 @@
 					fragmentShader: shader.fragmentShader,
 					vertexShader: shader.vertexShader,
 					uniforms: shader.uniforms,
-					depthWrite: false
+					depthWrite: false,
+					side: THREE.BackSide
 
 				} ),
 
 				mesh = new THREE.Mesh( new THREE.CubeGeometry( 100, 100, 100 ), material );
-				mesh.flipSided = true;
 				sceneCube.add( mesh );
 
 				//
@@ -468,6 +464,25 @@
 
 				for( var c in CARS ) initCarButton( c );
 
+				//
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function onWindowResize() {
+
+				windowHalfX = window.innerWidth / 2;
+				windowHalfY = window.innerHeight / 2;
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				cameraCube.aspect = window.innerWidth / window.innerHeight;
+				cameraCube.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
 			}
 
 			function initCarButton( car ) {
@@ -609,20 +624,13 @@
 
 				var timer = -0.0002 * Date.now();
 
-				camera.position.y += ( - mouseY - camera.position.y ) * .05;
-
 				camera.position.x = 1000 * Math.cos( timer );
+				camera.position.y += ( - mouseY - camera.position.y ) * .05;
 				camera.position.z = 1000 * Math.sin( timer );
 
 				camera.lookAt( scene.position );
+				cameraCube.rotation.copy( camera.rotation );
 
-				cubeTarget.x = - camera.position.x;
-				cubeTarget.y = - camera.position.y;
-				cubeTarget.z = - camera.position.z;
-
-				cameraCube.lookAt( cubeTarget );
-
-				renderer.clear();
 				renderer.render( sceneCube, cameraCube );
 				renderer.render( scene, camera );
 

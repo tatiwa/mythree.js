@@ -1,14 +1,15 @@
 /**
- * @author mr.doob / http://mrdoob.com/
+ * @author mrdoob / http://mrdoob.com/
  * @author mikael emtinger / http://gomo.se/
  * @author alteredq / http://alteredqualia.com/
  */
 
 THREE.Object3D = function () {
 
-	this.name = '';
-
 	this.id = THREE.Object3DCount ++;
+
+	this.name = '';
+	this.properties = {};
 
 	this.parent = undefined;
 	this.children = [];
@@ -19,11 +20,6 @@ THREE.Object3D = function () {
 	this.rotation = new THREE.Vector3();
 	this.eulerOrder = 'XYZ';
 	this.scale = new THREE.Vector3( 1, 1, 1 );
-
-	this.dynamic = false; // when true it retains arrays so they can be updated with __dirty*
-
-	this.doubleSided = false;
-	this.flipSided = false;
 
 	this.renderDepth = null;
 
@@ -58,6 +54,19 @@ THREE.Object3D.prototype = {
 
 	constructor: THREE.Object3D,
 
+	applyMatrix: function ( matrix ) {
+
+		this.matrix.multiply( matrix, this.matrix );
+
+		this.scale.getScaleFromMatrix( this.matrix );
+
+		var mat = new THREE.Matrix4().extractRotation( this.matrix );
+		this.rotation.setEulerFromRotationMatrix( mat, this.eulerOrder );
+
+		this.position.getPositionFromMatrix( this.matrix );
+
+	},
+
 	translate: function ( distance, axis ) {
 
 		this.matrix.rotateAxis( axis );
@@ -91,7 +100,7 @@ THREE.Object3D.prototype = {
 
 		if ( this.rotationAutoUpdate ) {
 
-			this.rotation.setRotationFromMatrix( this.matrix );
+			this.rotation.setEulerFromRotationMatrix( this.matrix, this.eulerOrder );
 
 		}
 
@@ -99,7 +108,14 @@ THREE.Object3D.prototype = {
 
 	add: function ( object ) {
 
-		if ( this.children.indexOf( object ) === - 1 ) {
+		if ( object === this ) {
+
+			console.warn( 'THREE.Object3D.add: An object can\'t be added as a child of itself.' );
+			return;
+
+		}
+
+		if ( object instanceof THREE.Object3D ) {
 
 			if ( object.parent !== undefined ) {
 
@@ -122,7 +138,7 @@ THREE.Object3D.prototype = {
 
 			if ( scene !== undefined && scene instanceof THREE.Scene )  {
 
-				scene.addObject( object );
+				scene.__addObject( object );
 
 			}
 
@@ -151,7 +167,7 @@ THREE.Object3D.prototype = {
 
 			if ( scene !== undefined && scene instanceof THREE.Scene ) {
 
-				scene.removeObject( object );
+				scene.__removeObject( object );
 
 			}
 
@@ -159,9 +175,9 @@ THREE.Object3D.prototype = {
 
 	},
 
-	getChildByName: function ( name, doRecurse ) {
+	getChildByName: function ( name, recursive ) {
 
-		var c, cl, child, recurseResult;
+		var c, cl, child;
 
 		for ( c = 0, cl = this.children.length; c < cl; c ++ ) {
 
@@ -173,13 +189,13 @@ THREE.Object3D.prototype = {
 
 			}
 
-			if ( doRecurse ) {
+			if ( recursive ) {
 
-				recurseResult = child.getChildByName( name, doRecurse );
+				child = child.getChildByName( name, recursive );
 
-				if ( recurseResult !== undefined ) {
+				if ( child !== undefined ) {
 
-					return recurseResult;
+					return child;
 
 				}
 
@@ -195,7 +211,7 @@ THREE.Object3D.prototype = {
 
 		this.matrix.setPosition( this.position );
 
-		if ( this.useQuaternion )  {
+		if ( this.useQuaternion === true )  {
 
 			this.matrix.setRotationFromQuaternion( this.quaternion );
 
@@ -218,13 +234,11 @@ THREE.Object3D.prototype = {
 
 	updateMatrixWorld: function ( force ) {
 
-		this.matrixAutoUpdate && this.updateMatrix();
+		if ( this.matrixAutoUpdate === true ) this.updateMatrix();
 
-		// update matrixWorld
+		if ( this.matrixWorldNeedsUpdate === true || force === true ) {
 
-		if ( this.matrixWorldNeedsUpdate || force ) {
-
-			if ( this.parent ) {
+			if ( this.parent !== undefined ) {
 
 				this.matrixWorld.multiply( this.parent.matrixWorld, this.matrix );
 
@@ -248,8 +262,28 @@ THREE.Object3D.prototype = {
 
 		}
 
+	},
+
+	worldToLocal: function ( vector ) {
+
+		return THREE.Object3D.__m1.getInverse( this.matrixWorld ).multiplyVector3( vector );
+
+	},
+
+	localToWorld: function ( vector ) {
+
+		return this.matrixWorld.multiplyVector3( vector );
+
+	},
+
+	clone: function () {
+
+		// TODO
+
 	}
 
 };
+
+THREE.Object3D.__m1 = new THREE.Matrix4();
 
 THREE.Object3DCount = 0;

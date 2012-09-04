@@ -1,7 +1,7 @@
 /**
  * @author mikael emtinger / http://gomo.se/
  * @author alteredq / http://alteredqualia.com/
- * @author mr.doob / http://mrdoob.com/
+ * @author mrdoob / http://mrdoob.com/
  */
 
 THREE.LOD = function () {
@@ -12,9 +12,8 @@ THREE.LOD = function () {
 
 };
 
-THREE.LOD.prototype = new THREE.Object3D();
-THREE.LOD.prototype.constructor = THREE.LOD;
-THREE.LOD.prototype.supr = THREE.Object3D.prototype;
+
+THREE.LOD.prototype = Object.create( THREE.Object3D.prototype );
 
 THREE.LOD.prototype.addLevel = function ( object3D, visibleAtDistance ) {
 
@@ -48,7 +47,7 @@ THREE.LOD.prototype.update = function ( camera ) {
 		camera.matrixWorldInverse.getInverse( camera.matrixWorld );
 
 		var inverse  = camera.matrixWorldInverse;
-		var distance = -( inverse.n31 * this.position.x + inverse.n32 * this.position.y + inverse.n33 * this.position.z + inverse.n34 );
+		var distance = -( inverse.elements[2] * this.matrixWorld.elements[12] + inverse.elements[6] * this.matrixWorld.elements[13] + inverse.elements[10] * this.matrixWorld.elements[14] + inverse.elements[14] );
 
 		this.LODs[ 0 ].object3D.visible = true;
 

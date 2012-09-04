@@ -1,5 +1,5 @@
 /**
- * @author mr.doob / http://mrdoob.com/
+ * @author mrdoob / http://mrdoob.com/
  * @author alteredq / http://alteredqualia.com/
  */
 
@@ -18,6 +18,9 @@ THREE.DirectionalLight = function ( hex, intensity, distance ) {
 
 	//
 
+	this.shadowCameraNear = 50;
+	this.shadowCameraFar = 5000;
+
 	this.shadowCameraLeft = -500;
 	this.shadowCameraRight = 500;
 	this.shadowCameraTop = 500;
@@ -33,6 +36,22 @@ THREE.DirectionalLight = function ( hex, intensity, distance ) {
 
 	//
 
+	this.shadowCascade = false;
+
+	this.shadowCascadeOffset = new THREE.Vector3( 0, 0, -1000 );
+	this.shadowCascadeCount = 2;
+
+	this.shadowCascadeBias = [ 0, 0, 0 ];
+	this.shadowCascadeWidth = [ 512, 512, 512 ];
+	this.shadowCascadeHeight = [ 512, 512, 512 ];
+
+	this.shadowCascadeNearZ = [ -1.000, 0.990, 0.998 ];
+	this.shadowCascadeFarZ  = [  0.990, 0.998, 1.000 ];
+
+	this.shadowCascadeArray = [];
+
+	//
+
 	this.shadowMap = null;
 	this.shadowMapSize = null;
 	this.shadowCamera = null;
@@ -40,5 +59,4 @@ THREE.DirectionalLight = function ( hex, intensity, distance ) {
 
 };
 
-THREE.DirectionalLight.prototype = new THREE.Light();
-THREE.DirectionalLight.prototype.constructor = THREE.DirectionalLight;
+THREE.DirectionalLight.prototype = Object.create( THREE.Light.prototype );

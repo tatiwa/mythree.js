@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<title>three.js webgl - animation - morph targets</title>
@@ -62,7 +62,7 @@
 		</div>
 
 
-		<script src="../build/Three.js"></script>
+		<script src="../build/three.min.js"></script>
 
 		<script src="js/Detector.js"></script>
 		<script src="js/Stats.js"></script>
@@ -93,18 +93,17 @@
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
 
-				scene = new THREE.Scene();
-				scene.fog = new THREE.Fog( 0x000000, 1, 15000 );
-
 				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 15000 );
 				camera.position.z = 500;
-				scene.add( camera );
+
+				scene = new THREE.Scene();
+				scene.fog = new THREE.Fog( 0x000000, 1, 15000 );
 
 				var light = new THREE.PointLight( 0xff2200 );
 				light.position.set( 100, 100, 100 );
 				scene.add( light );
 
-				var light = new THREE.AmbientLight( 0x333333 );
+				var light = new THREE.AmbientLight( 0x111111 );
 				scene.add( light );
 
 
@@ -119,13 +118,13 @@
 
 					for ( var v = 0; v < geometry.vertices.length; v ++ ) {
 
-						vertices.push( new THREE.Vertex( geometry.vertices[ v ].position.clone() ) )
+						vertices.push( geometry.vertices[ v ].clone() );
 
 						if ( v === i ) {
 
-							vertices[ vertices.length - 1 ].position.x *= 2;
-							vertices[ vertices.length - 1 ].position.y *= 2;
-							vertices[ vertices.length - 1 ].position.z *= 2;
+							vertices[ vertices.length - 1 ].x *= 2;
+							vertices[ vertices.length - 1 ].y *= 2;
+							vertices[ vertices.length - 1 ].z *= 2;
 
 						}
 
@@ -139,11 +138,28 @@
 
 				scene.add( mesh );
 
+				//
 
-				renderer = new THREE.WebGLRenderer( { clearColor:0x222222, clearAlpha: 1 } );
+				renderer = new THREE.WebGLRenderer( { clearColor: 0x222222, clearAlpha: 1 } );
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				renderer.sortObjects = false;
 				container.appendChild( renderer.domElement );
+
+				//
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function onWindowResize() {
+
+				windowHalfX = window.innerWidth / 2;
+				windowHalfY = window.innerHeight / 2;
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
 
 			}
 
